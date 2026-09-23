@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<div class="student-section-head"><div><h2>Peminjaman sayaaa</h2><p>Riwayat pengajuan yang kamu buat.</p></div><a href="{{ route('peminjaman.index') }}">Lihat semua <i class="bi bi-arrow-up-right"></i></a></div>
+<div class="student-section-head"><div><h2>Peminjaman saya</h2><p>Riwayat pengajuan yang kamu buat.</p></div><a href="{{ route('peminjaman.index') }}">Lihat semua <i class="bi bi-arrow-up-right"></i></a></div>
 <div class="student-card student-history">
     @forelse ($peminjamanSaya as $peminjaman)
         <div class="student-loan">
