@@ -13,9 +13,20 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::with('barang')
             ->when($request->user()->role !== 'admin', fn ($q) => $q->where('user_id', $request->user()->id))
-            ->when($request->status, fn ($q) => $q->where('status', $request->status))
+            ->when($request->status === 'terlambat', fn ($q) => $q
+                ->where('status', 'dipinjam')
+                ->whereDate('tanggal_kembali_rencana', '<', today()))
+            ->when($request->status && $request->status !== 'terlambat', fn ($q) => $q->where('status', $request->status))
             ->when($request->search, function ($q) use ($request) {
-                $q->where('nama_peminjam', 'like', "%{$request->search}%");
+                $search = "%{$request->search}%";
+                $q->where(function ($query) use ($search) {
+                    $query->where('nama_peminjam', 'like', $search)
+                        ->orWhere('kelas_jabatan', 'like', $search)
+                        ->orWhereHas('barang', function ($barangQuery) use ($search) {
+                            $barangQuery->where('nama_barang', 'like', $search)
+                                ->orWhere('kode_barang', 'like', $search);
+                        });
+                });
             })
             ->latest()
             ->paginate(10)

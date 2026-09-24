@@ -22,10 +22,7 @@
                 <div class="relative z-10">
                     <a href="/" class="inline-flex items-center gap-3" aria-label="Beranda Peminjaman Barang">
                         <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 shadow-lg ring-1 ring-white/20">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5v-9Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 7.75 7.5 3.5 7.5-3.5M12 11.25V20" />
-                            </svg>
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo sekolah" class="h-8 w-8 rounded-xl object-cover">
                         </span>
                         <span class="text-lg font-semibold tracking-tight">Peminjaman Barang</span>
                     </a>
@@ -73,10 +70,7 @@
                 <div class="w-full max-w-md">
                     <div class="mb-8 flex items-center gap-3 lg:hidden">
                         <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200">
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5v-9Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 7.75 7.5 3.5 7.5-3.5M12 11.25V20" />
-                            </svg>
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo sekolah" class="h-8 w-8 rounded-xl object-cover">
                         </span>
                         <span class="text-lg font-semibold tracking-tight text-slate-800">Peminjaman Barang</span>
                     </div>

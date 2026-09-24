@@ -60,6 +60,13 @@ class BarangController extends Controller
             'deskripsi' => 'nullable|string',
         ]);
 
+        $sedangDipinjam = $barang->peminjaman()->where('status', 'dipinjam')->sum('jumlah');
+        if ($data['stok_total'] < $sedangDipinjam) {
+            return back()->withInput()->withErrors([
+                'stok_total' => "Stok total tidak boleh kurang dari {$sedangDipinjam} unit yang sedang dipinjam.",
+            ]);
+        }
+
         // sesuaikan stok tersedia mengikuti selisih perubahan stok total
         $selisih = $data['stok_total'] - $barang->stok_total;
         $data['stok_tersedia'] = max(0, $barang->stok_tersedia + $selisih);
@@ -71,6 +78,10 @@ class BarangController extends Controller
 
     public function destroy(Barang $barang)
     {
+        if ($barang->peminjaman()->exists()) {
+            return back()->with('error', 'Barang tidak dapat dihapus karena memiliki riwayat peminjaman.');
+        }
+
         $barang->delete();
         return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus.');
     }

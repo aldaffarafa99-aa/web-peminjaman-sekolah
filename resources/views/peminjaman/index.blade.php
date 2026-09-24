@@ -9,12 +9,13 @@
 
 <form class="row g-2 mb-3" method="GET">
     <div class="col-auto">
-        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari nama peminjam...">
+        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari peminjam/barang/kode...">
     </div>
     <div class="col-auto">
         <select name="status" class="form-select">
             <option value="">Semua Status</option>
             <option value="dipinjam" @selected(request('status')==='dipinjam')>Dipinjam</option>
+            <option value="terlambat" @selected(request('status')==='terlambat')>Terlambat</option>
             <option value="dikembalikan" @selected(request('status')==='dikembalikan')>Dikembalikan</option>
         </select>
     </div>

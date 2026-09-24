@@ -100,6 +100,21 @@
             @endif
             <a href="{{ route('peminjaman.index') }}" class="quick-link"><span class="quick-icon blue"><i class="bi bi-clock-history"></i></span><span><strong>Riwayat peminjaman</strong><small>Lacak semua aktivitas</small></span><i class="bi bi-chevron-right"></i></a>
         </div>
+        <div class="dashboard-panel mb-4">
+            <div class="panel-heading">
+                <div><h5 class="mb-1">Stok menipis</h5><p class="mb-0">Barang dengan sisa maksimal 2 unit.</p></div>
+                <a href="{{ route('barang.index') }}" class="panel-link">Kelola <i class="bi bi-arrow-up-right"></i></a>
+            </div>
+            @forelse ($stokMenipis as $barang)
+                <div class="quick-link">
+                    <span class="quick-icon {{ $barang->stok_tersedia === 0 ? 'red' : 'orange' }}"><i class="bi bi-box-seam"></i></span>
+                    <span><strong>{{ $barang->nama_barang }}</strong><small>{{ $barang->kode_barang }}</small></span>
+                    <strong class="stock-count {{ $barang->stok_tersedia === 0 ? 'text-danger' : 'text-warning' }}">{{ $barang->stok_tersedia }}</strong>
+                </div>
+            @empty
+                <p class="text-muted small px-4 pb-3 mb-0">Semua stok masih mencukupi.</p>
+            @endforelse
+        </div>
         <div class="insight-card">
             <div class="insight-icon"><i class="bi bi-lightbulb"></i></div>
             <div><h6>Jaga inventaris tetap rapi</h6><p>Periksa stok dan barang terlambat secara berkala agar aktivitas sekolah tetap lancar.</p></div>
@@ -133,7 +148,7 @@
     .empty-state { color: #9aa4b6 !important; padding: 2rem !important; text-align: center; } .empty-state i { display: block; font-size: 1.7rem; margin-bottom: .4rem; }
     .quick-panel { padding-bottom: .65rem; } .quick-link { align-items: center; border-top: 1px solid #f0f2f7; color: inherit; display: flex; gap: .75rem; padding: 1rem 1.4rem; text-decoration: none; transition: .2s ease; } .quick-link:hover { background: #fafbff; color: inherit; padding-left: 1.6rem; }
     .quick-link > span:nth-child(2) { flex: 1; } .quick-link strong, .quick-link small { display: block; } .quick-link strong { font-size: .82rem; } .quick-link small { color: #98a2b5; font-size: .7rem; margin-top: .15rem; } .quick-link > i { color: #a8b1c1; font-size: .75rem; }
-    .quick-icon { align-items: center; border-radius: 11px; display: flex; height: 37px; justify-content: center; width: 37px; } .quick-icon.purple { background: #eeedff; color: #5146e5; } .quick-icon.blue { background: #e7f2ff; color: #2775d3; }
+    .quick-icon { align-items: center; border-radius: 11px; display: flex; height: 37px; justify-content: center; width: 37px; } .quick-icon.purple { background: #eeedff; color: #5146e5; } .quick-icon.blue { background: #e7f2ff; color: #2775d3; } .quick-icon.orange { background: #fff3df; color: #df881d; } .quick-icon.red { background: #ffebee; color: #de4b59; } .stock-count { font-size: .9rem; }
     .insight-card { align-items: flex-start; background: linear-gradient(135deg, #27205f, #5146e5); border-radius: 18px; color: #fff; display: flex; gap: .8rem; padding: 1.35rem; } .insight-icon { align-items: center; background: rgba(255,255,255,.15); border-radius: 10px; display: flex; flex: 0 0 35px; height: 35px; justify-content: center; } .insight-card h6 { font-weight: 700; margin: .1rem 0 .35rem; } .insight-card p { color: #d6d5ff; font-size: .75rem; line-height: 1.55; margin: 0; }
     .admin-card { background: linear-gradient(135deg, #171a3d, #30289c); border-radius: 18px; box-shadow: 0 12px 24px rgba(48,40,156,.18); color: #fff; padding: 1.35rem; }
     .admin-card-top { align-items: center; color: #fce78b; display: flex; font-size: .65rem; font-weight: 800; gap: .55rem; letter-spacing: .13em; }

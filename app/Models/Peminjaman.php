@@ -47,7 +47,8 @@ class Peminjaman extends Model
      */
     public function getStatusTampilAttribute(): string
     {
-        if ($this->status === 'dipinjam' && $this->tanggal_kembali_rencana->isPast()) {
+        if ($this->status === 'dipinjam'
+            && $this->tanggal_kembali_rencana?->toDateString() < today()->toDateString()) {
             return 'terlambat';
         }
         return $this->status;

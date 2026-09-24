@@ -39,9 +39,16 @@
             </ul>
             @auth
             <ul class="navbar-nav">
-                <li class="nav-item d-flex align-items-center text-light me-3">
-                    <span class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
-                    <span class="d-none d-sm-inline">{{ auth()->user()->name }}<small class="user-role">{{ auth()->user()->role === 'admin' ? 'Administrator' : 'Siswa' }}</small></span>
+                <li class="nav-item me-3">
+                    <a href="{{ route('profile.edit') }}" class="profile-nav-link" title="Pengaturan profil">
+                        @if (auth()->user()->avatar_path)
+                            <img src="{{ asset('storage/' . auth()->user()->avatar_path) }}" alt="Foto profil" class="user-avatar user-avatar-image">
+                        @else
+                            <span class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                        @endif
+                        <span class="d-none d-sm-inline">{{ auth()->user()->name }}<small class="user-role">{{ auth()->user()->role === 'admin' ? 'Administrator' : 'Siswa' }}</small></span>
+                        <i class="bi bi-chevron-down profile-nav-chevron"></i>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}">
@@ -85,7 +92,8 @@
     .app-navbar .nav-link:hover, .app-navbar .nav-link.active { color: #fff; background: rgba(255,255,255,.13); }
     .app-navbar .admin-nav-label { color: #fce78b; font-size: .78rem; }
     .user-role { color: #c7caff; display: block; font-size: .65rem; margin-top: .1rem; }
-    .user-avatar { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: .5rem; border-radius: 50%; background: #a9a5ff; color: #211d69; font-weight: 700; }
+    .profile-nav-link { align-items: center; color: #fff; display: flex; gap: .5rem; text-decoration: none; } .profile-nav-link:hover { color: #fff; opacity: .88; } .profile-nav-chevron { color: #c7caff; font-size: .65rem; margin-left: .15rem; }
+    .user-avatar { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: .1rem; border-radius: 50%; background: #a9a5ff; color: #211d69; font-weight: 700; } .user-avatar-image { object-fit: cover; }
     .btn-logout { color: #fff; border: 1px solid rgba(255,255,255,.28); border-radius: 9px; }
     .btn-logout:hover { background: #fff; color: #30289c; }
     .app-main .alert { border: 0; border-radius: 14px; box-shadow: 0 8px 20px rgba(31, 41, 65, .06); }
