@@ -31,7 +31,7 @@
                     <select name="barang_id" id="barang_id" class="form-select" required>
                         <option value="">-- Pilih Barang --</option>
                         @foreach ($barangs as $barang)
-                            <option value="{{ $barang->id }}" data-stok="{{ $barang->stok_tersedia }}" @selected(old('barang_id') == $barang->id)>
+                            <option value="{{ $barang->id }}" data-stok="{{ $barang->stok_tersedia }}" @selected(old('barang_id', $selectedBarangId ?? null) == $barang->id)>
                                 {{ $barang->nama_barang }} (tersedia: {{ $barang->stok_tersedia }})
                             </option>
                         @endforeach

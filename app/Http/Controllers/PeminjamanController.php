@@ -35,10 +35,15 @@ class PeminjamanController extends Controller
         return view('peminjaman.index', compact('peminjaman'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $barangs = Barang::where('stok_tersedia', '>', 0)->orderBy('nama_barang')->get();
-        return view('peminjaman.create', compact('barangs'));
+        $selectedBarangId = $request->query('barang_id');
+
+        $barangs = Barang::where('stok_tersedia', '>', 0)
+            ->orderBy('nama_barang')
+            ->get();
+
+        return view('peminjaman.create', compact('barangs', 'selectedBarangId'));
     }
 
     public function store(Request $request)

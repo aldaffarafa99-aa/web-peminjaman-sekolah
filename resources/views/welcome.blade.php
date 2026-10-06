@@ -1,91 +1,662 @@
-<!DOCTYPE html>
-<html lang="id">
+﻿<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Peminjaman Barang Sekolah membantu sekolah mengelola inventaris dan peminjaman dengan lebih mudah.">
+    <meta name="description" content="Sistem inventaris sekolah modern untuk peminjaman barang secara cepat, transparan, dan efisien.">
     <title>Peminjaman Barang Sekolah</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        :root {
+            --bg-deep: #040816;
+            --bg-soft: rgba(15, 23, 42, 0.78);
+            --panel: rgba(15, 23, 42, 0.52);
+            --panel-light: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+            --muted: #a5b4cf;
+            --indigo: #6366f1;
+            --indigo-2: #8b5cf6;
+            --emerald: #34d399;
+            --cyan: #67e8f9;
+            --rose: #fb7185;
+            --amber: #fbbf24;
+            --border: rgba(148, 163, 184, 0.2);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.18), transparent 26%),
+                radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.18), transparent 22%),
+                linear-gradient(135deg, #f7f8ff 0%, #eef3ff 34%, #edf5ff 100%);
+            color: #0f172a;
+        }
+
+        .mesh-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.22), transparent 20%),
+                radial-gradient(circle at 80% 10%, rgba(168, 85, 247, 0.17), transparent 22%),
+                radial-gradient(circle at 50% 70%, rgba(16, 185, 129, 0.1), transparent 25%);
+            filter: blur(16px);
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.38);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .glass-light {
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 18px 40px rgba(79, 70, 229, 0.08);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .floating-nav {
+            background: rgba(15, 23, 42, 0.38);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .nav-link {
+            position: relative;
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 100%;
+            height: 2px;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, rgba(99,102,241,0.8), rgba(167,139,250,0.8));
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 30%, #67e8f9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #4f46e5 100%);
+            box-shadow: 0 20px 30px rgba(99, 102, 241, 0.38);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 26px 36px rgba(99, 102, 241, 0.46);
+        }
+
+        .ghost-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.2s ease;
+        }
+
+        .ghost-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .search-shell {
+            background: rgba(15, 23, 42, 0.34);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+        }
+
+        .search-shell input::placeholder {
+            color: rgba(148, 163, 184, 0.9);
+        }
+
+        .result-item {
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .result-item:hover {
+            background: rgba(99, 102, 241, 0.08);
+            transform: translateX(2px);
+        }
+
+        .bento-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.75rem;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.46));
+            box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-4px) scale(1.005);
+            border-color: rgba(99, 102, 241, 0.45);
+            box-shadow: 0 25px 55px rgba(79, 70, 229, 0.22);
+        }
+
+        .status-track {
+            position: relative;
+            padding-top: 0.5rem;
+        }
+
+        .status-track::before {
+            content: "";
+            position: absolute;
+            left: 1.3rem;
+            top: 0.5rem;
+            bottom: 0.5rem;
+            width: 2px;
+            background: linear-gradient(180deg, rgba(52,211,153,0.8), rgba(99,102,241,0.8), rgba(148,163,184,0.25));
+        }
+
+        .status-node {
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-node::before {
+            content: "";
+            position: absolute;
+            left: -1.6rem;
+            top: 0.4rem;
+            width: 0.8rem;
+            height: 0.8rem;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #34d399, #22c55e);
+            box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.18);
+        }
+
+        .qr-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.08);
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.2rem;
+        }
+
+        .qr-grid span {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 0.3rem;
+            background: rgba(148, 163, 184, 0.15);
+        }
+
+        .qr-grid span:nth-child(odd) {
+            background: rgba(99, 102, 241, 0.88);
+        }
+
+        .qr-grid span:nth-child(4n) {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .catalog-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .catalog-item:hover {
+            border-color: rgba(99, 102, 241, 0.34);
+            background: rgba(99, 102, 241, 0.06);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(167,139,250,0.18));
+            border: 1px solid rgba(167,139,250,0.36);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.22);
+        }
+
+        .faq-item {
+            background: rgba(15, 23, 42, 0.26);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            transition: all 0.2s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        @media (max-width: 767px) {
+            .floating-nav {
+                border-radius: 1.25rem;
+            }
+        }
+    </style>
 </head>
-<body class="landing-body font-sans text-slate-900 antialiased">
-    <header class="landing-header">
-        <div class="landing-container flex items-center justify-between py-5">
-            <a href="{{ url('/') }}" class="landing-brand">
-                <span class="landing-logo"><img src="{{ asset('images/logo.png') }}" alt=""></span>
-                <span><strong>Peminjaman Barang</strong><small>Sekolah</small></span>
-            </a>
-            <nav class="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
-                <a href="#fitur" class="transition hover:text-indigo-600">Fitur</a>
-                <a href="#cara-kerja" class="transition hover:text-indigo-600">Cara kerja</a>
-                <a href="{{ route('login') }}" class="landing-nav-login">Masuk</a>
+<body class="min-h-screen antialiased">
+    <div class="mesh-bg"></div>
+
+    <header class="fixed inset-x-0 top-0 z-50 pt-5">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <nav class="floating-nav mx-auto flex max-w-6xl items-center justify-between rounded-full px-4 py-3 sm:px-6">
+                <a href="#top" class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-400 shadow-[0_12px_24px_rgba(99,102,241,0.4)]">
+                        <span class="text-lg font-black text-white">S</span>
+                    </div>
+                    <div class="leading-none text-left">
+                        <div class="text-sm font-black tracking-tight text-white">Peminjaman Barang</div>
+                        <div class="mt-1 text-[10px] font-medium uppercase tracking-[0.24em] text-slate-300">Sekolah</div>
+                    </div>
+                </a>
+
+                <div class="hidden items-center gap-8 text-sm font-medium md:flex">
+                    <a href="#fitur" class="nav-link">Fitur</a>
+                    <a href="#katalog" class="nav-link">Katalog Cepat</a>
+                    <a href="#cara-pinjam" class="nav-link">Cara Pinjam</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                </div>
+
+                <a href="{{ route('login') }}" class="primary-btn inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(99,102,241,0.38)] sm:px-5">
+                    Masuk / Pinjam Sekarang
+                    <span aria-hidden="true">→</span>
+                </a>
             </nav>
-            <a href="{{ route('login') }}" class="landing-mobile-login md:hidden">Masuk</a>
         </div>
     </header>
 
-    <main>
-        <section class="landing-hero">
-            <div class="landing-orb landing-orb-one"></div>
-            <div class="landing-orb landing-orb-two"></div>
-            <div class="landing-container relative z-10 grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_.95fr] lg:py-24">
-                <div class="max-w-2xl">
-                    <div class="landing-kicker"><span class="landing-kicker-dot"></span>Sistem inventaris sekolah yang lebih rapi</div>
-                    <h1>Kelola barang sekolah dengan <span>lebih mudah.</span></h1>
-                    <p class="landing-lead">Satu ruang kerja untuk mengajukan peminjaman, memantau status, dan menjaga inventaris sekolah tetap tertata.</p>
-                    <div class="flex flex-col gap-3 sm:flex-row">
-                        <a href="{{ route('login') }}" class="landing-primary-button">Masuk ke aplikasi <i class="bi bi-arrow-up-right"></i></a>
-                        <a href="{{ route('register') }}" class="landing-secondary-button">Buat akun siswa</a>
-                    </div>
-                    <div class="landing-trust"><span class="landing-check"><i class="bi bi-check2"></i></span>Mudah digunakan oleh siswa dan admin sekolah</div>
-                </div>
+    <main id="top" class="relative overflow-hidden">
+        <section class="relative pt-32 pb-20 sm:pt-36 lg:pt-40 lg:pb-24">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="grid items-center gap-12 lg:grid-cols-[1.08fr_0.92fr]">
+                    <div class="relative z-10">
+                        <div class="mb-6 inline-flex items-center gap-3 rounded-full border border-indigo-300/30 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-indigo-100 shadow-[0_12px_24px_rgba(99,102,241,0.14)] backdrop-blur-xl">
+                            <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_18px_rgba(52,211,153,0.8)]"></span>
+                            Smart school inventory
+                        </div>
 
-                <div class="landing-hero-art" aria-hidden="true">
-                    <div class="landing-art-glow"></div>
-                    <div class="landing-art-card landing-art-main">
-                        <div class="flex items-center justify-between"><div class="art-label">Ringkasan inventaris</div><i class="bi bi-three-dots text-slate-400"></i></div>
-                        <div class="mt-6 flex items-end justify-between"><div><div class="art-number">128</div><div class="art-muted">Total barang tercatat</div></div><span class="art-trend"><i class="bi bi-arrow-up"></i> 12%</span></div>
-                        <div class="art-chart mt-7"><span style="height:38%"></span><span style="height:54%"></span><span style="height:46%"></span><span style="height:72%"></span><span style="height:62%"></span><span style="height:88%"></span><span style="height:76%"></span><span style="height:96%"></span></div>
-                        <div class="mt-5 flex justify-between text-[10px] text-slate-400"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span><span>Jul</span><span>Ags</span></div>
+                        <h1 class="max-w-3xl text-4xl font-black leading-[0.94] tracking-[-0.06em] text-slate-900 sm:text-5xl lg:text-7xl">
+                            Pinjam Fasilitas Sekolah:
+                            <span class="gradient-text">Cepat, Transparan, &amp; Tanpa Ribet.</span>
+                        </h1>
+
+                        <p class="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+                            Sistem manajemen inventaris pintar untuk siswa, guru, dan sarpras sekolah.
+                        </p>
+
+                        <div class="mt-8 rounded-[1.75rem] border border-white/25 bg-white/10 p-3 shadow-[0_18px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+                            <div class="flex items-center gap-3 rounded-[1.2rem] border border-indigo-200/30 bg-slate-950/80 p-3 shadow-inner shadow-indigo-500/10">
+                                <span class="text-lg text-indigo-300">⌕</span>
+                                <input id="searchInput" type="text" placeholder="Cari barang favoritmu... misal: Proyektor, Kamera, Bola" class="w-full border-0 bg-transparent text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-0" autocomplete="off">
+                                <button class="primary-btn rounded-full px-5 py-2 text-sm font-semibold text-white">Cari</button>
+                            </div>
+                            <div id="searchResults" class="mt-3 hidden max-h-64 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/70 p-2 shadow-inner shadow-indigo-500/10"></div>
+                        </div>
+
+                        <div class="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                            <span class="rounded-full border border-emerald-200 bg-emerald-100/80 px-3 py-1 font-medium text-emerald-700">⚡ 98% ACC Instan</span>
+                            <span class="rounded-full border border-indigo-200 bg-indigo-100/80 px-3 py-1 font-medium text-indigo-700">📦 450+ Barang Siap Dipinjam</span>
+                        </div>
                     </div>
-                    <div class="landing-art-card landing-art-float landing-art-loan"><span class="art-float-icon bg-emerald-100 text-emerald-600"><i class="bi bi-check-lg"></i></span><span><strong>Peminjaman disetujui</strong><small>Proyektor Epson · 2 unit</small></span></div>
-                    <div class="landing-art-card landing-art-float landing-art-stock"><span class="art-float-icon bg-indigo-100 text-indigo-600"><i class="bi bi-box-seam"></i></span><span><strong>Stok terpantau</strong><small>Semua data tersinkron</small></span></div>
+
+                    <div class="relative z-10">
+                        <div class="relative mx-auto max-w-lg">
+                            <div class="glass rounded-[2rem] p-5 text-white shadow-[0_30px_70px_rgba(79,70,229,0.22)]">
+                                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div>
+                                        <p class="text-[10px] uppercase tracking-[0.28em] text-slate-300">Inventaris hari ini</p>
+                                        <h2 class="mt-2 text-3xl font-black tracking-[-0.05em] text-white">128</h2>
+                                    </div>
+                                    <div class="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-300">▲ 12.4%</div>
+                                </div>
+
+                                <div class="mt-6 flex items-end justify-between gap-3">
+                                    <div class="flex h-28 w-full items-end gap-2">
+                                        <div class="h-1/3 flex-1 rounded-t-xl bg-gradient-to-t from-indigo-500 to-indigo-300"></div>
+                                        <div class="h-2/5 flex-1 rounded-t-xl bg-gradient-to-t from-violet-500 to-violet-300"></div>
+                                        <div class="h-1/2 flex-1 rounded-t-xl bg-gradient-to-t from-cyan-400 to-cyan-200"></div>
+                                        <div class="h-2/3 flex-1 rounded-t-xl bg-gradient-to-t from-indigo-500 to-violet-300"></div>
+                                        <div class="h-3/5 flex-1 rounded-t-xl bg-gradient-to-t from-emerald-400 to-emerald-300"></div>
+                                        <div class="h-5/6 flex-1 rounded-t-xl bg-gradient-to-t from-indigo-400 to-cyan-300"></div>
+                                        <div class="h-4/5 flex-1 rounded-t-xl bg-gradient-to-t from-violet-500 to-indigo-300"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-5 grid grid-cols-3 gap-3 text-xs text-slate-300">
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
+                                        <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400">Tersedia</div>
+                                        <div class="mt-2 text-xl font-bold text-emerald-300">89</div>
+                                    </div>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
+                                        <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400">Dipinjam</div>
+                                        <div class="mt-2 text-xl font-bold text-amber-300">27</div>
+                                    </div>
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-3">
+                                        <div class="text-[10px] uppercase tracking-[0.2em] text-slate-400">Perbaikan</div>
+                                        <div class="mt-2 text-xl font-bold text-rose-300">12</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="absolute -left-6 top-16 flex items-center gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-left shadow-[0_20px_40px_rgba(16,185,129,0.18)] backdrop-blur-xl">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/20 text-xl">✅</div>
+                                <div>
+                                    <div class="text-[10px] uppercase tracking-[0.18em] text-emerald-200">Disetujui</div>
+                                    <div class="text-sm font-semibold text-white">Proyektor Epson</div>
+                                </div>
+                            </div>
+
+                            <div class="absolute -right-5 bottom-8 flex items-center gap-3 rounded-2xl border border-indigo-300/20 bg-indigo-500/10 px-4 py-3 text-left shadow-[0_20px_40px_rgba(99,102,241,0.14)] backdrop-blur-xl">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-400/20 text-xl">📦</div>
+                                <div>
+                                    <div class="text-[10px] uppercase tracking-[0.18em] text-indigo-200">Stok</div>
+                                    <div class="text-sm font-semibold text-white">3 unit siap dipinjam</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="fitur" class="landing-section bg-white">
-            <div class="landing-container py-20 lg:py-24">
-                <div class="mx-auto max-w-2xl text-center"><div class="landing-section-kicker">Semua yang dibutuhkan</div><h2>Urusan peminjaman jadi lebih ringan.</h2><p class="landing-section-copy">Dirancang untuk membuat alur inventaris sekolah lebih jelas, cepat, dan mudah dipantau.</p></div>
-                <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div class="landing-feature"><span class="feature-icon feature-purple"><i class="bi bi-send"></i></span><h3>Ajukan online</h3><p>Siswa dapat mengajukan peminjaman dari mana saja tanpa formulir kertas.</p></div>
-                    <div class="landing-feature"><span class="feature-icon feature-blue"><i class="bi bi-activity"></i></span><h3>Status real-time</h3><p>Pantau status peminjaman dengan informasi yang selalu terbarui.</p></div>
-                    <div class="landing-feature"><span class="feature-icon feature-orange"><i class="bi bi-clock-history"></i></span><h3>Riwayat lengkap</h3><p>Semua aktivitas tersimpan rapi dan mudah ditemukan kembali.</p></div>
-                    <div class="landing-feature"><span class="feature-icon feature-green"><i class="bi bi-boxes"></i></span><h3>Stok otomatis</h3><p>Stok tersedia menyesuaikan setiap peminjaman dan pengembalian.</p></div>
+        <section id="fitur" class="relative pb-20 lg:pb-28">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-3xl text-center">
+                    <p class="text-xs font-bold uppercase tracking-[0.28em] text-indigo-600">Semua yang dibutuhkan</p>
+                    <h2 class="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-5xl">Inventaris sekolah jadi lebih rapi, cepat, dan aman.</h2>
+                </div>
+
+                <div class="mt-12 grid gap-5 md:grid-cols-12">
+                    <div class="md:col-span-7">
+                        <div class="bento-card h-full p-6 sm:p-7">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.25em] text-slate-300">Live status tracking</p>
+                                    <h3 class="mt-2 text-2xl font-bold text-white">Peminjaman aktif</h3>
+                                </div>
+                                <div class="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">Online</div>
+                            </div>
+
+                            <div class="status-track mt-8 space-y-6">
+                                <div class="status-node pl-6">
+                                    <div class="flex items-center justify-between gap-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-3">
+                                        <div>
+                                            <p class="text-xs uppercase tracking-[0.2em] text-emerald-200">1. Mengajukan</p>
+                                            <p class="mt-1 text-sm font-semibold text-white">Ayu — Laptop Dell</p>
+                                        </div>
+                                        <span class="rounded-full bg-emerald-500/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">Terkirim</span>
+                                    </div>
+                                </div>
+
+                                <div class="status-node pl-6">
+                                    <div class="flex items-center justify-between gap-4 rounded-2xl border border-indigo-300/20 bg-indigo-500/10 p-3">
+                                        <div>
+                                            <p class="text-xs uppercase tracking-[0.2em] text-indigo-200">2. Disetujui admin</p>
+                                            <p class="mt-1 text-sm font-semibold text-white">Proyektor Epson — 2 unit</p>
+                                        </div>
+                                        <span class="rounded-full bg-indigo-500/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-200">Approved</span>
+                                    </div>
+                                </div>
+
+                                <div class="status-node pl-6">
+                                    <div class="flex items-center justify-between gap-4 rounded-2xl border border-amber-300/20 bg-amber-500/10 p-3">
+                                        <div>
+                                            <p class="text-xs uppercase tracking-[0.2em] text-amber-200">3. Diambil</p>
+                                            <p class="mt-1 text-sm font-semibold text-white">Kamera Canon — Senin, 09.00</p>
+                                        </div>
+                                        <span class="rounded-full bg-amber-500/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-amber-200">Pickup</span>
+                                    </div>
+                                </div>
+
+                                <div class="status-node pl-6">
+                                    <div class="flex items-center justify-between gap-4 rounded-2xl border border-slate-400/20 bg-white/5 p-3">
+                                        <div>
+                                            <p class="text-xs uppercase tracking-[0.2em] text-slate-300">4. Dikembalikan</p>
+                                            <p class="mt-1 text-sm font-semibold text-white">Speaker Portable — 1 hari lalu</p>
+                                        </div>
+                                        <span class="rounded-full bg-slate-500/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-200">Done</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-5">
+                        <div class="bento-card h-full p-6 sm:p-7">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.25em] text-slate-300">Quick scan</p>
+                                    <h3 class="mt-2 text-2xl font-bold text-white">Pengembalian otomatis</h3>
+                                </div>
+                                <div class="flex h-10 w-10 items-center justify-center rounded-2xl border border-indigo-300/20 bg-indigo-500/10 text-xl text-indigo-200">◼</div>
+                            </div>
+
+                            <div class="mt-8 flex flex-col items-center justify-center rounded-[1.8rem] border border-white/10 bg-slate-950/70 p-6 text-center">
+                                <div class="qr-box rounded-2xl p-4">
+                                    <div class="qr-grid">
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                    </div>
+                                </div>
+
+                                <p class="mt-5 text-sm text-slate-300">Scan QR code untuk konfirmasi pengembalian</p>
+                                <button class="mt-4 rounded-full border border-indigo-300/25 bg-indigo-500/15 px-4 py-2 text-sm font-semibold text-indigo-100">Scan Sekarang</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-12">
+                        <div id="katalog" class="bento-card p-6 sm:p-7">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.25em] text-slate-300">Katalog barang populer</p>
+                                    <h3 class="mt-2 text-2xl font-bold text-white">Barang paling sering dipinjam</h3>
+                                </div>
+                                <a href="#" class="text-sm font-medium text-indigo-200 hover:text-white">Lihat semua barang →</a>
+                            </div>
+
+                            <div class="mt-6 grid gap-4 lg:grid-cols-3">
+                                <div class="catalog-item rounded-[1.5rem] p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/20 to-cyan-400/20 text-2xl">📷</div>
+                                        <span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300">Tersedia</span>
+                                    </div>
+                                    <h4 class="mt-4 text-lg font-bold text-white">Kamera Canon</h4>
+                                    <p class="mt-1 text-sm text-slate-300">2 unit tersedia · kelas multimedia</p>
+                                </div>
+
+                                <div class="catalog-item rounded-[1.5rem] p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/20 to-indigo-400/20 text-2xl">📽️</div>
+                                        <span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300">Tersedia</span>
+                                    </div>
+                                    <h4 class="mt-4 text-lg font-bold text-white">Proyektor BenQ</h4>
+                                    <p class="mt-1 text-sm text-slate-300">3 unit tersedia · ruang guru</p>
+                                </div>
+
+                                <div class="catalog-item rounded-[1.5rem] p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/20 to-rose-300/20 text-2xl">🔊</div>
+                                        <span class="rounded-full bg-rose-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-rose-300">Dipinjam</span>
+                                    </div>
+                                    <h4 class="mt-4 text-lg font-bold text-white">Speaker Portable</h4>
+                                    <p class="mt-1 text-sm text-slate-300">1 unit sedang dipinjam</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="cara-kerja" class="landing-section landing-process-section">
-            <div class="landing-container grid gap-12 py-20 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:py-24">
-                <div><div class="landing-section-kicker">Cara kerja</div><h2>Empat langkah untuk meminjam barang.</h2><p class="landing-section-copy">Alur sederhana yang membuat siswa dan admin selalu tahu apa yang harus dilakukan berikutnya.</p><a href="{{ route('register') }}" class="landing-text-link">Mulai sebagai siswa <i class="bi bi-arrow-right"></i></a></div>
-                <div class="landing-steps">
-                    <div class="landing-step"><span>01</span><div><h3>Ajukan</h3><p>Pilih barang, jumlah, dan tanggal pengembalian yang kamu butuhkan.</p></div></div>
-                    <div class="landing-step"><span>02</span><div><h3>Disetujui admin</h3><p>Admin memeriksa ketersediaan dan mencatat pengajuanmu.</p></div></div>
-                    <div class="landing-step"><span>03</span><div><h3>Pinjam</h3><p>Ambil barang sesuai jadwal dan gunakan dengan bertanggung jawab.</p></div></div>
-                    <div class="landing-step"><span>04</span><div><h3>Kembalikan</h3><p>Kembalikan barang, lalu stok akan diperbarui otomatis.</p></div></div>
+        <section id="cara-pinjam" class="relative pb-20 lg:pb-28">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="mb-10 text-center">
+                    <p class="text-xs font-bold uppercase tracking-[0.28em] text-indigo-600">Cara pinjam</p>
+                    <h2 class="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-5xl">Alur 3 langkah yang sederhana</h2>
+                </div>
+
+                <div class="grid gap-5 lg:grid-cols-3">
+                    <div class="glass-light rounded-[2rem] p-6 sm:p-7">
+                        <div class="step-number inline-flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-black text-white">01</div>
+                        <h3 class="mt-6 text-2xl font-bold text-slate-900">Cari &amp; Pesan</h3>
+                        <p class="mt-3 text-base leading-7 text-slate-600">Pilih barang yang dibutuhkan, tentukan tanggal pinjam, dan kirim pengajuan secara online.</p>
+                    </div>
+
+                    <div class="glass-light rounded-[2rem] p-6 sm:p-7">
+                        <div class="step-number inline-flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-black text-white">02</div>
+                        <h3 class="mt-6 text-2xl font-bold text-slate-900">Ambil &amp; Scan QR</h3>
+                        <p class="mt-3 text-base leading-7 text-slate-600">Tunjukkan QR code ke petugas sarpras untuk verifikasi dan penyerahan barang dengan cepat.</p>
+                    </div>
+
+                    <div class="glass-light rounded-[2rem] p-6 sm:p-7">
+                        <div class="step-number inline-flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-black text-white">03</div>
+                        <h3 class="mt-6 text-2xl font-bold text-slate-900">Kembalikan Tepat Waktu</h3>
+                        <p class="mt-3 text-base leading-7 text-slate-600">Setelah selesai, sistem akan otomatis mengingatkan jadwal pengembalian dan mencatat statusnya.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="relative pb-24">
+            <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                <div class="mb-10 text-center">
+                    <p class="text-xs font-bold uppercase tracking-[0.28em] text-indigo-600">FAQ</p>
+                    <h2 class="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-5xl">Pertanyaan yang sering ditanya</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <details class="faq-item rounded-[1.5rem] p-5 open:border-indigo-400/40" open>
+                        <summary class="cursor-pointer list-none text-lg font-semibold text-white">Apakah peminjaman bisa dilakukan dari ponsel?</summary>
+                        <p class="mt-3 text-slate-300">Ya. Sistem dibuat responsif agar siswa bisa mengajukan dan memantau peminjaman dari perangkat apa pun, termasuk ponsel.</p>
+                    </details>
+
+                    <details class="faq-item rounded-[1.5rem] p-5">
+                        <summary class="cursor-pointer list-none text-lg font-semibold text-white">Bagaimana jika barang sedang dipinjam?</summary>
+                        <p class="mt-3 text-slate-300">Sistem menampilkan status stok secara real-time dan akan memberitahu bahwa barang tersebut sedang dipinjam atau tidak tersedia.</p>
+                    </details>
+
+                    <details class="faq-item rounded-[1.5rem] p-5">
+                        <summary class="cursor-pointer list-none text-lg font-semibold text-white">Apakah ada notifikasi pengembalian?</summary>
+                        <p class="mt-3 text-slate-300">Tersedia notifikasi pengingat otomatis untuk membantu siswa mengembalikan barang tepat waktu dan menjaga kelancaran operasional sekolah.</p>
+                    </details>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="landing-footer">
-        <div class="landing-container flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between"><a href="{{ url('/') }}" class="landing-brand"><span class="landing-logo"><img src="{{ asset('images/logo.png') }}" alt=""></span><span><strong>Peminjaman Barang</strong><small>Sekolah</small></span></a><p>© {{ date('Y') }} Peminjaman Barang Sekolah. Dibuat untuk sekolah yang lebih tertata.</p></div>
+    <footer class="border-t border-slate-200/80 bg-white/55 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-400 text-xl font-black text-white">S</div>
+                <div>
+                    <div class="text-sm font-black text-slate-900">Peminjaman Barang</div>
+                    <div class="text-[10px] uppercase tracking-[0.24em] text-slate-500">Sekolah</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-5 text-sm text-slate-600">
+                <a href="#fitur" class="hover:text-indigo-600">Fitur</a>
+                <a href="#katalog" class="hover:text-indigo-600">Katalog</a>
+                <a href="#cara-pinjam" class="hover:text-indigo-600">Cara Pinjam</a>
+                <a href="#faq" class="hover:text-indigo-600">FAQ</a>
+            </div>
+
+            <div class="text-sm text-slate-600">
+                <p>© {{ date('Y') }} Peminjaman Barang Sekolah</p>
+                <p class="mt-1">Kontak Sarpras: sarpras@sekolah.sch.id</p>
+            </div>
+        </div>
     </footer>
 
-    <style>
-        :root { --landing-ink:#1b2340; --landing-line:#e9ebf5; }
-        .landing-body{background:#f7f8fc}.landing-container{margin:0 auto;max-width:1180px;padding-left:1.25rem;padding-right:1.25rem}.landing-header{background:rgba(255,255,255,.86);border-bottom:1px solid rgba(231,235,243,.8);position:relative;z-index:20;backdrop-filter:blur(16px)}.landing-brand{align-items:center;color:var(--landing-ink);display:inline-flex;gap:.7rem;text-decoration:none}.landing-brand strong,.landing-brand small{display:block}.landing-brand strong{font-size:.95rem;letter-spacing:-.02em}.landing-brand small{color:#7d87a0;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}.landing-logo{align-items:center;background:linear-gradient(135deg,#292075,#604fe9);border-radius:13px;box-shadow:0 8px 18px rgba(81,70,229,.22);display:flex;height:39px;justify-content:center;overflow:hidden;width:39px}.landing-logo img{height:34px;object-fit:contain;width:34px}.landing-nav-login{border:1px solid #dfe2f0;border-radius:9px;color:#433abf;padding:.55rem .85rem;transition:.2s ease}.landing-nav-login:hover{border-color:#b9b6f7;background:#f3f2ff}.landing-mobile-login{border-radius:8px;background:#5146e5;color:#fff;font-size:.8rem;font-weight:700;padding:.55rem .8rem}.landing-hero{background:linear-gradient(135deg,#f8f8ff 0%,#f1f0ff 48%,#f8f8ff 100%);min-height:630px;overflow:hidden;position:relative}.landing-orb{border:1px solid rgba(81,70,229,.1);border-radius:50%;position:absolute}.landing-orb-one{height:430px;right:-130px;top:-200px;width:430px}.landing-orb-two{bottom:-250px;height:500px;left:-250px;width:500px}.landing-kicker,.landing-section-kicker{color:#5146e5;font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.landing-kicker{align-items:center;display:inline-flex;gap:.5rem;margin-bottom:1.2rem}.landing-kicker-dot{background:#7a70ed;border-radius:50%;box-shadow:0 0 0 5px #dedcff;height:7px;width:7px}.landing-hero h1{color:#1c2442;font-size:clamp(2.7rem,5vw,4.8rem);font-weight:750;letter-spacing:-.065em;line-height:1.02;max-width:720px}.landing-hero h1 span{color:#5146e5}.landing-lead{color:#65718b;font-size:1.06rem;line-height:1.8;margin:1.5rem 0 2rem;max-width:550px}.landing-primary-button,.landing-secondary-button{align-items:center;border-radius:11px;display:inline-flex;font-size:.85rem;font-weight:700;justify-content:center;padding:.9rem 1.15rem;text-decoration:none;transition:.2s ease}.landing-primary-button{background:linear-gradient(110deg,#5146e5,#7548d7);box-shadow:0 12px 24px rgba(81,70,229,.22);color:#fff;gap:.55rem}.landing-primary-button:hover{color:#fff;transform:translateY(-2px)}.landing-secondary-button{background:#fff;border:1px solid #dfe2f0;color:#3f47a0}.landing-secondary-button:hover{background:#f4f3ff;border-color:#bdb9f7;color:#373091}.landing-trust{align-items:center;color:#77829a;display:flex;font-size:.75rem;gap:.5rem;margin-top:1.35rem}.landing-check{align-items:center;background:#dff6eb;border-radius:50%;color:#259266;display:inline-flex;height:18px;justify-content:center;width:18px}.landing-hero-art{min-height:430px;position:relative}.landing-art-glow{background:#d9d6ff;border-radius:50%;filter:blur(45px);height:280px;left:18%;opacity:.6;position:absolute;top:12%;width:280px}.landing-art-card{background:rgba(255,255,255,.9);border:1px solid rgba(219,222,241,.95);border-radius:18px;box-shadow:0 20px 45px rgba(52,46,133,.12);position:absolute}.landing-art-main{left:8%;padding:1.5rem;top:13%;width:78%}.art-label,.art-muted{color:#8a94aa;font-size:.72rem}.art-number{color:#212b4c;font-size:2.6rem;font-weight:750;letter-spacing:-.06em}.art-trend{background:#e5f8ef;border-radius:99px;color:#218653;font-size:.68rem;font-weight:700;padding:.35rem .55rem}.art-chart{align-items:end;border-bottom:1px solid #e7eaf4;display:flex;gap:.65rem;height:105px}.art-chart span{background:linear-gradient(180deg,#8178ef,#5146e5);border-radius:6px 6px 2px 2px;flex:1;opacity:.85}.landing-art-float{align-items:center;display:flex;gap:.7rem;padding:.75rem .9rem;width:230px}.landing-art-loan{left:0;top:67%}.landing-art-stock{right:0;top:4%}.art-float-icon{align-items:center;border-radius:10px;display:flex;height:34px;justify-content:center;width:34px}.landing-art-float strong,.landing-art-float small{display:block}.landing-art-float strong{color:#34405d;font-size:.72rem}.landing-art-float small{color:#919aaf;font-size:.62rem;margin-top:.14rem}.landing-section{scroll-margin-top:80px}.landing-section h2{color:#1d2643;font-size:clamp(1.8rem,3vw,2.7rem);font-weight:750;letter-spacing:-.05em;line-height:1.1;margin-top:.6rem}.landing-section-copy{color:#78839a;line-height:1.7;margin:1rem auto 0;max-width:540px}.landing-feature{border:1px solid var(--landing-line);border-radius:16px;padding:1.3rem;transition:.2s ease}.landing-feature:hover{border-color:#c7c4fa;box-shadow:0 12px 28px rgba(45,42,125,.07);transform:translateY(-3px)}.feature-icon{align-items:center;border-radius:11px;display:flex;height:40px;justify-content:center;margin-bottom:1.1rem;width:40px}.feature-purple{background:#eeedff;color:#5146e5}.feature-blue{background:#e7f2ff;color:#2775d3}.feature-orange{background:#fff3df;color:#df881d}.feature-green{background:#e5f7ee;color:#269161}.landing-feature h3{color:#29334e;font-size:.95rem;font-weight:750}.landing-feature p{color:#8490a6;font-size:.78rem;line-height:1.65;margin-top:.5rem}.landing-process-section{background:#f4f5fb}.landing-text-link{color:#5146e5;display:inline-flex;font-size:.82rem;font-weight:750;gap:.5rem;margin-top:1.5rem;text-decoration:none}.landing-steps{background:#fff;border:1px solid var(--landing-line);border-radius:18px;padding:.5rem 1.5rem}.landing-step{align-items:flex-start;border-bottom:1px solid #eef0f5;display:flex;gap:1rem;padding:1.25rem 0}.landing-step:last-child{border-bottom:0}.landing-step>span{color:#8a82ee;font-size:.78rem;font-weight:800;padding-top:.15rem}.landing-step h3{color:#29334e;font-size:.95rem;font-weight:750}.landing-step p{color:#8490a6;font-size:.78rem;line-height:1.55;margin-top:.3rem}.landing-footer{background:#1d1b50;color:#bdbce3}.landing-footer .landing-brand{color:#fff}.landing-footer .landing-brand small{color:#a7a5d0}.landing-footer p{font-size:.72rem}@media(max-width:767px){.landing-container{padding-left:1rem;padding-right:1rem}.landing-hero{min-height:auto}.landing-hero-art{min-height:380px}.landing-art-main{left:4%;top:10%;width:90%}.landing-art-stock{right:-2%;top:0;transform:scale(.85);transform-origin:right top}.landing-art-loan{left:-2%;top:70%;transform:scale(.85);transform-origin:left top}.landing-art-float{width:210px}.landing-footer p{line-height:1.5}}
-    </style>
+    <script>
+        const inventory = [
+            { name: 'Proyektor Epson', status: 'Tersedia', stock: '3 Unit', icon: '📽️' },
+            { name: 'Kamera Canon', status: 'Tersedia', stock: '2 Unit', icon: '📷' },
+            { name: 'Bola Basket', status: 'Tersedia', stock: '5 Unit', icon: '🏀' },
+            { name: 'Speaker Portable', status: 'Dipinjam', stock: '1 Unit', icon: '🔊' },
+            { name: 'Laptop Dell', status: 'Tersedia', stock: '4 Unit', icon: '💻' },
+            { name: 'Tripod Kamera', status: 'Dipinjam', stock: '1 Unit', icon: '🎥' },
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        function renderResults(query) {
+            const term = query.trim().toLowerCase();
+            const filtered = inventory.filter(item => item.name.toLowerCase().includes(term));
+
+            if (!term || filtered.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-4 text-sm text-slate-300">
+                        ${term ? 'Barang yang Anda cari belum tersedia.' : 'Coba cari: Proyektor, Kamera, atau Bola'}
+                    </div>
+                `;
+                searchResults.classList.remove('hidden');
+                return;
+            }
+
+            searchResults.innerHTML = filtered.slice(0, 4).map(item => `
+                <button type="button" class="result-item flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-2 text-left text-white">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg">${item.icon}</span>
+                        <div>
+                            <div class="text-sm font-semibold">${item.name}</div>
+                            <div class="text-xs text-slate-400">${item.stock}</div>
+                        </div>
+                    </div>
+                    <span class="rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.15em] ${item.status === 'Tersedia' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'}">${item.status}</span>
+                </button>
+            `).join('');
+
+            searchResults.classList.remove('hidden');
+        }
+
+        searchInput.addEventListener('input', (event) => {
+            renderResults(event.target.value);
+        });
+
+        searchInput.addEventListener('focus', () => {
+            renderResults(searchInput.value);
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('#searchInput') && !event.target.closest('#searchResults')) {
+                searchResults.classList.add('hidden');
+            }
+        });
+
+        renderResults('');
+    </script>
 </body>
 </html>
