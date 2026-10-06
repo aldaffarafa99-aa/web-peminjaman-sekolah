@@ -34,8 +34,14 @@
             <div class="student-loan-main"><strong>{{ $peminjaman->barang->nama_barang }}</strong><small>{{ $peminjaman->jumlah }} unit · {{ $peminjaman->tanggal_pinjam->format('d M Y') }}</small></div>
             @if ($peminjaman->status_tampil === 'terlambat')
                 <span class="student-status late">Terlambat</span>
-            @elseif ($peminjaman->status_tampil === 'dikembalikan')
+            @elseif ($peminjaman->status_tampil === 'selesai' || $peminjaman->status_tampil === 'dikembalikan')
                 <span class="student-status returned">Dikembalikan</span>
+            @elseif ($peminjaman->status_tampil === 'pending')
+                <span class="student-status borrowed">Menunggu persetujuan</span>
+            @elseif ($peminjaman->status_tampil === 'disetujui')
+                <span class="student-status returned">Disetujui</span>
+            @elseif ($peminjaman->status_tampil === 'ditolak')
+                <span class="student-status late">Ditolak</span>
             @else
                 <span class="student-status borrowed">Dipinjam</span>
             @endif

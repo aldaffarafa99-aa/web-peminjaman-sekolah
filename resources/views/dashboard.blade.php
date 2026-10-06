@@ -77,10 +77,16 @@
                     <td><div class="dashboard-borrower"><span>{{ strtoupper(substr($p->nama_peminjam, 0, 1)) }}</span><strong>{{ $p->nama_peminjam }}</strong><small>{{ $p->kelas_jabatan ?? 'Peminjam' }}</small></div></td>
                     <td><div class="dashboard-item"><span class="dashboard-item-icon"><i class="bi bi-{{ str_contains(strtolower($p->barang->nama_barang), 'proyektor') ? 'display' : (str_contains(strtolower($p->barang->nama_barang), 'laptop') ? 'laptop' : 'box-seam') }}"></i></span><span>{{ $p->barang->nama_barang }}</span></div></td><td>{{ $p->jumlah }} unit</td><td>{{ $p->tanggal_pinjam->format('d M Y') }}</td>
                     <td>
-                        @if($p->status_tampil === 'dikembalikan')
-                            <span class="status-pill status-success">Dikembalikan</span>
+                        @if(in_array($p->status_tampil, ['selesai', 'dikembalikan']))
+                            <span class="status-pill status-success">Selesai</span>
                         @elseif($p->status_tampil === 'terlambat')
                             <span class="status-pill status-danger">Terlambat</span>
+                        @elseif($p->status_tampil === 'pending')
+                            <span class="status-pill status-warning">Menunggu</span>
+                        @elseif($p->status_tampil === 'disetujui')
+                            <span class="status-pill status-success">Disetujui</span>
+                        @elseif($p->status_tampil === 'ditolak')
+                            <span class="status-pill status-danger">Ditolak</span>
                         @else
                             <span class="status-pill status-warning">Dipinjam</span>
                         @endif
@@ -99,7 +105,7 @@
             <div class="admin-card mb-4">
                 <div class="admin-card-top"><span class="admin-badge"><i class="bi bi-stars"></i></span><span>AKSES ADMIN</span></div>
                 <h5>Kontrol cepat</h5><p>Semua pintasan kerja dalam satu tempat.</p>
-                <div class="admin-shortcuts"><a href="{{ route('barang.create') }}" class="admin-shortcut"><i class="bi bi-plus-lg"></i><span>Tambah barang</span></a><a href="{{ route('barang.index') }}" class="admin-shortcut"><i class="bi bi-boxes"></i><span>Kelola barang</span></a><a href="{{ route('peminjaman.index') }}" class="admin-shortcut"><i class="bi bi-clipboard2-data"></i><span>Pantau pinjam</span></a><button type="button" class="admin-shortcut" data-bs-toggle="modal" data-bs-target="#exportSoonModal"><i class="bi bi-download"></i><span>Export laporan</span></button></div>
+                <div class="admin-shortcuts"><a href="{{ route('barang.create') }}" class="admin-shortcut"><i class="bi bi-plus-lg"></i><span>Tambah barang</span></a><a href="{{ route('barang.index') }}" class="admin-shortcut"><i class="bi bi-boxes"></i><span>Kelola barang</span></a><a href="{{ route('peminjaman.index') }}" class="admin-shortcut"><i class="bi bi-clipboard2-data"></i><span>Pantau pinjam</span></a><a href="{{ route('laporan.index') }}" class="admin-shortcut"><i class="bi bi-download"></i><span>Export laporan</span></a></div>
             </div>
         @endif
         <div class="dashboard-panel quick-panel mb-4">

@@ -301,7 +301,7 @@
                                     <span class="timeline-dot"></span>
                                     <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-3">
                                         <div class="text-[10px] uppercase tracking-[0.2em] text-emerald-200">1. Mengajukan</div>
-                                        <div class="mt-1 text-sm font-semibold text-white">Ayu — Laptop Dell</div>
+                                        <div class="mt-1 text-sm font-semibold text-white">Ayu ï¿½ Laptop Dell</div>
                                     </div>
                                 </div>
 
@@ -309,7 +309,7 @@
                                     <span class="timeline-dot"></span>
                                     <div class="rounded-2xl border border-indigo-300/20 bg-indigo-500/10 p-3">
                                         <div class="text-[10px] uppercase tracking-[0.2em] text-indigo-200">2. Disetujui admin</div>
-                                        <div class="mt-1 text-sm font-semibold text-white">Proyektor Epson — 2 unit</div>
+                                        <div class="mt-1 text-sm font-semibold text-white">Proyektor Epson ï¿½ 2 unit</div>
                                     </div>
                                 </div>
 
@@ -317,7 +317,7 @@
                                     <span class="timeline-dot"></span>
                                     <div class="rounded-2xl border border-amber-300/20 bg-amber-500/10 p-3">
                                         <div class="text-[10px] uppercase tracking-[0.2em] text-amber-200">3. Diambil</div>
-                                        <div class="mt-1 text-sm font-semibold text-white">Kamera Canon — Senin, 09.00</div>
+                                        <div class="mt-1 text-sm font-semibold text-white">Kamera Canon ï¿½ Senin, 09.00</div>
                                     </div>
                                 </div>
 
@@ -325,7 +325,7 @@
                                     <span class="timeline-dot"></span>
                                     <div class="rounded-2xl border border-slate-400/20 bg-white/5 p-3">
                                         <div class="text-[10px] uppercase tracking-[0.2em] text-slate-300">4. Dikembalikan</div>
-                                        <div class="mt-1 text-sm font-semibold text-white">Speaker Portable — 1 hari lalu</div>
+                                        <div class="mt-1 text-sm font-semibold text-white">Speaker Portable ï¿½ 1 hari lalu</div>
                                     </div>
                                 </div>
                             </div>
@@ -370,7 +370,7 @@
                             <div class="mt-6 grid gap-4 lg:grid-cols-3">
                                 @forelse ($barangPopuler as $barang)
                                     @php
-                                        $isAvailable = $barang->stok_tersedia > 0;
+                                        $isAvailable = $barang->status_barang === 'tersedia' && $barang->stok_tersedia > 0;
                                         $borrowRoute = auth()->check()
                                             ? route('peminjaman.create', ['barang_id' => $barang->id])
                                             : route('login');
@@ -387,7 +387,7 @@
 
                                         <h4 class="mt-4 text-lg font-bold text-white">{{ $barang->nama_barang }}</h4>
                                         <p class="mt-1 text-sm text-slate-300">
-                                            {{ $barang->stok_tersedia }} unit tersedia • {{ $barang->kategori ?? 'Umum' }}
+                                            {{ $barang->stok_tersedia }} unit tersedia ï¿½ {{ $barang->kategori ?? 'Umum' }}
                                         </p>
 
                                         <a href="{{ $borrowRoute }}" class="mt-4 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_20px_rgba(99,102,241,0.25)] transition hover:scale-[1.01]">
@@ -484,7 +484,7 @@
             </div>
 
             <div class="text-sm text-slate-600">
-                <p>© {{ date('Y') }} Peminjaman Barang Sekolah</p>
+                <p>ï¿½ {{ date('Y') }} Peminjaman Barang Sekolah</p>
                 <p class="mt-1">Kontak Sarpras: sarpras@sekolah.sch.id</p>
             </div>
         </div>
@@ -517,7 +517,7 @@
                         <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-lg">??</span>
                         <div>
                             <div class="text-sm font-semibold">${item.nama}</div>
-                            <div class="text-xs text-slate-400">${item.kategori} · ${item.stok} unit</div>
+                            <div class="text-xs text-slate-400">${item.kategori} ï¿½ ${item.stok} unit</div>
                         </div>
                     </div>
                     <span class="status-pill ${item.status === 'Tersedia' ? 'status-available' : 'status-borrowed'}">${item.status}</span>

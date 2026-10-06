@@ -11,8 +11,8 @@ class LandingController extends Controller
     public function index(Request $request)
     {
         $totalBarang = Barang::count();
-        $barangTersedia = Barang::sum('stok_tersedia');
-        $sedangDipinjam = Peminjaman::where('status', 'dipinjam')->count();
+        $barangTersedia = Barang::where('status_barang', 'tersedia')->sum('stok_tersedia');
+        $sedangDipinjam = Peminjaman::whereIn('status', ['dipinjam', 'terlambat'])->count();
         $kategoriBarang = Barang::whereNotNull('kategori')
             ->where('kategori', '!=', '')
             ->distinct('kategori')
@@ -20,7 +20,7 @@ class LandingController extends Controller
 
         $barangPopuler = Barang::withCount([
             'peminjaman as total_peminjaman' => function ($query) {
-                $query->whereIn('status', ['dipinjam', 'dikembalikan']);
+                $query->whereIn('status', ['dipinjam', 'selesai', 'dikembalikan']);
             },
         ])
             ->orderByDesc('total_peminjaman')
@@ -48,7 +48,7 @@ class LandingController extends Controller
                 'nama' => $barang->nama_barang,
                 'kategori' => $barang->kategori ?? 'Umum',
                 'stok' => $barang->stok_tersedia,
-                'status' => $barang->stok_tersedia > 0 ? 'Tersedia' : 'Dipinjam',
+                'status' => $barang->status_barang === 'tersedia' && $barang->stok_tersedia > 0 ? 'Tersedia' : 'Tidak tersedia',
                 'route' => auth()->check()
                     ? route('peminjaman.create', ['barang_id' => $barang->id])
                     : route('login'),

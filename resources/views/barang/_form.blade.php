@@ -19,7 +19,23 @@
     </div>
     <div class="col-md-4">
         <label class="form-label">Kategori</label>
-        <input type="text" name="kategori" class="form-control" placeholder="Elektronik, ATK, Olahraga, dll" value="{{ old('kategori', $barang->kategori ?? '') }}">
+        <select name="kategori_id" class="form-select">
+            <option value="">-- Pilih kategori --</option>
+            @foreach ($kategoris as $kategori)
+                <option value="{{ $kategori->id }}" @selected(old('kategori_id', $barang->kategori_id ?? '') == $kategori->id)>{{ $kategori->nama }}</option>
+            @endforeach
+        </select>
+        @if ($kategoris->isEmpty())<div class="form-text"><a href="{{ route('kategori.create') }}">Tambah kategori terlebih dahulu</a></div>@endif
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Lokasi penyimpanan</label>
+        <select name="lokasi_barang_id" class="form-select">
+            <option value="">-- Pilih lokasi --</option>
+            @foreach ($lokasis as $lokasi)
+                <option value="{{ $lokasi->id }}" @selected(old('lokasi_barang_id', $barang->lokasi_barang_id ?? '') == $lokasi->id)>{{ $lokasi->nama_lokasi }} ({{ $lokasi->kode_lokasi }})</option>
+            @endforeach
+        </select>
+        @if ($lokasis->isEmpty())<div class="form-text"><a href="{{ route('lokasi-barang.create') }}">Tambah lokasi terlebih dahulu</a></div>@endif
     </div>
     <div class="col-md-4">
         <label class="form-label">Stok Total</label>
@@ -35,6 +51,18 @@
                 <option value="{{ $val }}" @selected(old('kondisi', $barang->kondisi ?? 'baik') === $val)>{{ $label }}</option>
             @endforeach
         </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Status operasional</label>
+        <select name="status_barang" class="form-select" required>
+            @foreach (['tersedia' => 'Tersedia', 'perbaikan' => 'Dalam perbaikan', 'tidak_tersedia' => 'Tidak tersedia'] as $value => $label)
+                <option value="{{ $value }}" @selected(old('status_barang', $barang->status_barang ?? 'tersedia') === $value)>{{ $label }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-12">
+        <label class="form-label">Kategori teks lama (opsional)</label>
+        <input type="text" name="kategori" class="form-control" placeholder="Contoh: Elektronik" value="{{ old('kategori', $barang->kategori ?? '') }}">
     </div>
     <div class="col-12">
         <label class="form-label">Deskripsi</label>

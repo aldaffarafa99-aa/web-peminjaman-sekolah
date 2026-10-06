@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'Notifikasi')
+@section('content')
+<div class="page-hero mb-4"><div><div class="page-kicker">Pusat pemberitahuan</div><h3 class="mb-1">Notifikasi</h3><p class="mb-0">Persetujuan dan pengingat pengembalian barang.</p></div></div>
+<div class="data-card">@forelse($notifikasi as $item)<div class="d-flex align-items-start gap-3 border-bottom p-3 {{ $item->read_at ? 'bg-white' : 'bg-light' }}"><span class="quick-icon orange"><i class="bi bi-bell"></i></span><div class="flex-grow-1"><strong>{{ $item->data['judul'] ?? 'Pemberitahuan' }}</strong><p class="mb-1 text-muted">{{ $item->data['pesan'] ?? '' }}</p><small class="text-muted">{{ $item->created_at->format('d M Y H:i') }}</small>@if(isset($item->data['peminjaman_id']))<a class="d-block small mt-1" href="{{ route('peminjaman.index') }}">Lihat peminjaman</a>@endif</div>@if(!$item->read_at)<form method="POST" action="{{ route('notifikasi.dibaca', $item->id) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-light">Tandai dibaca</button></form>@endif</div>@empty<div class="text-center text-muted p-5">Belum ada notifikasi.</div>@endforelse</div><div class="mt-3">{{ $notifikasi->links() }}</div>
+@endsection

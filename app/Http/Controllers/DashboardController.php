@@ -21,8 +21,8 @@ class DashboardController extends Controller
 
         $totalBarang = Barang::count();
         $totalStok = Barang::sum('stok_total');
-        $sedangDipinjam = Peminjaman::where('status', 'dipinjam')->count();
-        $terlambat = Peminjaman::where('status', 'dipinjam')
+        $sedangDipinjam = Peminjaman::whereIn('status', ['dipinjam', 'terlambat'])->count();
+        $terlambat = Peminjaman::where('status', 'terlambat')
             ->whereDate('tanggal_kembali_rencana', '<', today())
             ->count();
         $stokMenipis = Barang::where('stok_tersedia', '<=', 2)

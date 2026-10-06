@@ -16,7 +16,11 @@
         <div class="hero-count"><strong class="count-up" data-count="{{ $barangs->total() }}">0</strong><span>jenis barang</span></div>
         <div class="hero-count secondary"><strong class="count-up" data-count="{{ $totalUnitTampil }}">0</strong><span>total unit</span></div>
         <div class="hero-low-stock"><i class="bi bi-exclamation-triangle"></i><strong>{{ $stokMenipisTampil }}</strong><span>stok menipis</span></div>
-        <a href="{{ route('barang.create') }}" class="btn btn-primary page-action"><i class="bi bi-plus-lg"></i> Tambah Barang</a>
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('kategori.index') }}" class="btn btn-light page-action">Kategori</a>
+            <a href="{{ route('lokasi-barang.index') }}" class="btn btn-light page-action">Lokasi</a>
+            <a href="{{ route('barang.create') }}" class="btn btn-primary page-action"><i class="bi bi-plus-lg"></i> Tambah Barang</a>
+        @endif
     </div>
 </div>
 
@@ -47,7 +51,7 @@
         <table class="table inventory-table mb-0 align-middle">
             <thead>
                 <tr>
-                    <th>Kode</th><th>Nama Barang</th><th>Kategori</th><th>Stok Tersedia</th><th>Kondisi</th><th class="text-end">Aksi</th>
+                    <th>Kode</th><th>Nama Barang</th><th>Kategori</th><th>Lokasi</th><th>Stok Tersedia</th><th>Kondisi</th><th>Status</th>@if(auth()->user()->role === 'admin')<th class="text-end">Aksi</th>@endif
                 </tr>
             </thead>
             <tbody>
@@ -63,20 +67,24 @@
                 <tr class="inventory-row" data-category="{{ $categoryKey }}" data-low="{{ $stockPercent < 20 ? 'true' : 'false' }}" data-condition="{{ $conditionKey }}">
                     <td><span class="code-chip">{{ $barang->kode_barang }}</span></td>
                     <td><div class="item-name"><span class="item-icon category-{{ $categoryKey }}"><i class="bi bi-{{ $categoryIcon }}"></i></span><span><strong>{{ $barang->nama_barang }} @if($stockPercent < 20)<em class="low-stock-badge"><i class="bi bi-exclamation-circle"></i> Menipis</em>@endif</strong>@if($barang->deskripsi)<small>{{ Str::limit($barang->deskripsi, 35) }}</small>@else<small class="no-description">Deskripsi belum ditambahkan</small>@endif</span></div></td>
-                    <td><span class="category-text">{{ $barang->kategori ?? 'Umum' }}</span></td>
+                    <td><span class="category-text">{{ $barang->kategoriRelasi?->nama ?? $barang->kategori ?? 'Umum' }}</span></td>
+                    <td><span class="category-text">{{ $barang->lokasi?->nama_lokasi ?? 'Belum ditentukan' }}</span></td>
                     <td><div class="stock-info"><strong>{{ $barang->stok_tersedia }} <small>/ {{ $barang->stok_total }} unit</small></strong><div class="stock-track {{ $stockTone }}"><span style="width: {{ $stockPercent }}%"></span></div></div></td>
                     <td>
                         @php $badge = ['baik' => 'good', 'rusak_ringan' => 'warning', 'rusak_berat' => 'danger'][$barang->kondisi]; @endphp
                         <span class="condition-badge {{ $badge }}"><i class="bi bi-circle-fill"></i>{{ $barang->kondisi === 'baik' ? 'Baik' : ($barang->kondisi === 'rusak_ringan' ? 'Perlu perhatian' : 'Rusak') }}</span>
                     </td>
-                    <td class="text-end text-nowrap">
-                        <a href="{{ route('barang.edit', $barang) }}" class="icon-action edit" title="Edit barang"><i class="bi bi-pencil-square"></i></a>
-                        <button type="button" class="icon-action delete" title="Hapus barang" data-bs-toggle="modal" data-bs-target="#deleteBarangModal" data-delete-url="{{ route('barang.destroy', $barang) }}" data-barang-name="{{ $barang->nama_barang }}"><i class="bi bi-trash3"></i></button>
-                        <form id="delete-form-{{ $barang->id }}" action="{{ route('barang.destroy', $barang) }}" method="POST" class="d-none">@csrf @method('DELETE')</form>
-                    </td>
+                    <td><span class="condition-badge {{ $barang->status_barang === 'tersedia' ? 'good' : 'warning' }}">{{ ['tersedia' => 'Tersedia', 'perbaikan' => 'Perbaikan', 'tidak_tersedia' => 'Tidak tersedia'][$barang->status_barang] ?? ucfirst($barang->status_barang) }}</span></td>
+                    @if(auth()->user()->role === 'admin')
+                        <td class="text-end text-nowrap">
+                            <a href="{{ route('barang.edit', $barang) }}" class="icon-action edit" title="Edit barang"><i class="bi bi-pencil-square"></i></a>
+                            <button type="button" class="icon-action delete" title="Hapus barang" data-bs-toggle="modal" data-bs-target="#deleteBarangModal" data-delete-url="{{ route('barang.destroy', $barang) }}" data-barang-name="{{ $barang->nama_barang }}"><i class="bi bi-trash3"></i></button>
+                            <form id="delete-form-{{ $barang->id }}" action="{{ route('barang.destroy', $barang) }}" method="POST" class="d-none">@csrf @method('DELETE')</form>
+                        </td>
+                    @endif
                 </tr>
                 @empty
-                <tr><td colspan="6" class="empty-table"><i class="bi bi-inbox"></i><strong>Belum ada data barang</strong><span>Tambahkan barang pertama untuk memulai inventaris.</span></td></tr>
+                <tr><td colspan="{{ auth()->user()->role === 'admin' ? 8 : 7 }}" class="empty-table"><i class="bi bi-inbox"></i><strong>Belum ada data barang</strong><span>Tambahkan barang pertama untuk memulai inventaris.</span></td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -85,6 +93,7 @@
 
 <div class="table-footer"><span>Menampilkan <strong id="visibleInventoryCount">{{ $barangs->count() }}</strong> dari <strong>{{ $barangs->total() }}</strong> barang</span><div class="pagination-wrap">{{ $barangs->links() }}</div></div>
 
+@if(auth()->user()->role === 'admin')
 <div class="modal fade" id="deleteBarangModal" tabindex="-1" aria-labelledby="deleteBarangModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -103,6 +112,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <script>
     const deleteBarangModal = document.getElementById('deleteBarangModal');
@@ -110,17 +120,19 @@
     const confirmDeleteBarang = document.getElementById('confirmDeleteBarang');
     let deleteBarangUrl = null;
 
-    deleteBarangModal.addEventListener('show.bs.modal', event => {
-        const button = event.relatedTarget;
-        deleteBarangUrl = button.getAttribute('data-delete-url');
-        deleteBarangName.textContent = button.getAttribute('data-barang-name');
-    });
+    if (deleteBarangModal) {
+        deleteBarangModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            deleteBarangUrl = button.getAttribute('data-delete-url');
+            deleteBarangName.textContent = button.getAttribute('data-barang-name');
+        });
 
-    confirmDeleteBarang.addEventListener('click', () => {
-        if (deleteBarangUrl) {
-            document.querySelector(`form[action="${deleteBarangUrl}"]`).submit();
-        }
-    });
+        confirmDeleteBarang.addEventListener('click', () => {
+            if (deleteBarangUrl) {
+                document.querySelector(`form[action="${deleteBarangUrl}"]`).submit();
+            }
+        });
+    }
 
     const inventoryRows = [...document.querySelectorAll('.inventory-row')];
     const filterChips = [...document.querySelectorAll('.filter-chip')];

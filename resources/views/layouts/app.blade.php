@@ -34,6 +34,9 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('peminjaman.*') ? 'active' : '' }}" href="{{ route('peminjaman.index') }}"><i class="bi bi-arrow-left-right me-2"></i>Peminjaman</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('notifikasi.*') ? 'active' : '' }}" href="{{ route('notifikasi.index') }}"><i class="bi bi-bell me-2"></i>Notifikasi @if(auth()->user()->unreadNotifications->count())<span class="badge bg-warning text-dark">{{ auth()->user()->unreadNotifications->count() }}</span>@endif</a>
+                </li>
                 @if (auth()->user()->role === 'admin')
                     <li class="nav-item">
                         <span class="nav-link admin-nav-label"><i class="bi bi-shield-check me-2"></i>Mode Admin</span>
@@ -49,7 +52,7 @@
                         @else
                             <span class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                         @endif
-                        <span class="d-none d-sm-inline">{{ auth()->user()->name }}<small class="user-role">{{ auth()->user()->role === 'admin' ? 'Administrator' : 'Siswa' }}</small></span>
+                        <span class="d-none d-sm-inline">{{ auth()->user()->name }}<small class="user-role">{{ auth()->user()->role === 'admin' ? 'Admin Sarpras' : (auth()->user()->role === 'guru' ? 'Guru' : 'Siswa') }}</small></span>
                         <i class="bi bi-chevron-down profile-nav-chevron"></i>
                     </a>
                 </li>

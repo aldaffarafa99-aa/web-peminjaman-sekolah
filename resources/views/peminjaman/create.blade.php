@@ -59,6 +59,10 @@
                     <input type="date" name="tanggal_kembali_rencana" class="form-control" value="{{ old('tanggal_kembali_rencana') }}" required>
                 </div>
                 <div class="col-12">
+                    <label class="form-label">Tujuan penggunaan</label>
+                    <textarea name="tujuan_penggunaan" class="form-control" rows="3" maxlength="2000" required>{{ old('tujuan_penggunaan') }}</textarea>
+                </div>
+                <div class="col-12">
                     <label class="form-label">Catatan</label>
                     <textarea name="catatan" class="form-control" rows="2">{{ old('catatan') }}</textarea>
                 </div>
